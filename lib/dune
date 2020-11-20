@@ -1,0 +1,6 @@
+(library
+ (name ls)
+ (public_name ls)
+ (flags (:standard -open StdLabels)))
+
+(include_subdirs unqualified)

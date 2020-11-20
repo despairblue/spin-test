@@ -1,0 +1,37 @@
+{
+  "name": "ls",
+  "esy": {
+    "build": "dune build -p #{self.name}",
+    "buildDev": "refmterr dune build --root . --only-package #{self.name}",
+    "buildEnv": {
+      "ODOC_SYNTAX": "re"
+    }
+  },
+  "dependencies": {
+    "@opam/cmdliner": "*",
+    "@opam/logs": "*",
+    "@opam/fmt": "*",
+    "@opam/dune": ">= 2.0",
+    "@opam/reason": "*",
+    "ocaml": ">= 4.8.0"
+  },
+  "devDependencies": {
+    "@opam/dune-release": "*",
+    "@opam/merlin": "*",
+    "@opam/odoc": "*",
+    "@opam/utop": "*",
+    "@reason-native/rely": "*",
+    "refmterr": "*",
+    "ocaml": "~4.10.0"
+  },
+  "scripts": {
+    "start": "esy x ls",
+    "test": "esy dune exec test/test_runner.exe",
+    "doc": "esy dune build @doc",
+    "doc-path": "esy echo #{self.target_dir}/default/_doc/_html/index.html",
+    "format": "esy dune build @fmt --auto-promote",
+    "watch": "esy dune build -p #{self.name} --watch",
+    "utop": "esy dune utop lib -- -implicit-bindings",
+    "release": "./script/release.sh"
+  }
+}
