@@ -4,7 +4,6 @@ on:
   release:
     types: published
 
-{% if package_manager == 'Esy' -%}
 jobs:
   build:
     name: Build and test
@@ -74,86 +73,6 @@ jobs:
 
       - name: Export dependencies
         run: esy export-dependencies
-{% else -%}
-jobs:
-  build:
-    name: Build and test
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os:
-          - macos-latest
-          - ubuntu-latest
-          - windows-latest
-        ocaml-version:
-          - 4.11.1
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Retrieve opam cache
-        uses: actions/cache@v2
-        if: runner.os != 'Windows'
-        id: cache-opam
-        with:
-          path: ~/.opam
-          key: v1-${{ runner.os }}-opam-${{ matrix.ocaml-version }}-${{ hashFiles('ls.opam.locked') }}
-          restore-keys: |
-            v1-${{ runner.os }}-opam-${{ matrix.ocaml-version }}-
-
-      - name: Use OCaml ${{ matrix.ocaml-version }}
-        uses: avsm/setup-ocaml@v1
-        with:
-          ocaml-version: ${{ matrix.ocaml-version }}
-
-      - name: Use Node.js 12.x
-        if: ${{ matrix.os == 'ubuntu-latest' }}
-        uses: actions/setup-node@v1
-        with:
-          node-version: 12.x
-
-      - name: Fetch git tags
-        run: git fetch --tags --force
-
-      - name: Pin package
-        run: opam pin add ls.dev . --no-action
-
-      - name: Query and install external dependencies
-        run: opam depext ls --yes --with-doc --with-test
-
-      - name: Install dependencies
-        if: steps.cache-opam.outputs.cache-hit != 'true'
-        run: opam install . --deps-only --with-doc --with-test --locked --unlock-base
-
-      - name: Upgrade dependencies
-        run: opam upgrade --fixup
-        if: steps.cache-opam.outputs.cache-hit == 'true'
-          
-      - name: Substitute watermarks
-        run: opam exec -- dune subst
-
-      - name: Build
-        run: opam exec -- dune build --release
-
-      - name: Make NPM release skeleton
-        if: ${{ matrix.os == 'ubuntu-latest' }}
-        run: node script/release-make-skeleton.js
-
-      - name: Upload _release
-        if: ${{ matrix.os == 'ubuntu-latest' }}
-        uses: actions/upload-artifact@master
-        with:
-          name: _release
-          path: _release
-
-      - name: Upload artifacts for ${{ matrix.os }}
-        uses: actions/upload-artifact@master
-        with:
-          name: ${{ matrix.os }}
-          path: _build/default/bin/main.exe
-{% endif %}
 
   publish:
     needs: build
