@@ -2,6 +2,7 @@
  (name main)
  (public_name ls)
  (libraries ls cmdliner fmt fmt.tty logs.fmt logs.cli)
- (flags (:standard -open StdLabels)))
+ (flags
+  (:standard -open StdLabels)))
 
 (include_subdirs unqualified)

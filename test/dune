@@ -3,13 +3,15 @@
  (libraries rely.lib ls)
  (modules
   (:standard \ test_runner))
- (flags (:standard -linkall -g -open StdLabels -w +A-48-42-40)))
+ (flags
+  (:standard -linkall -g -open StdLabels -w +A-48-42-40)))
 
 (executable
  (name test_runner)
  (libraries rely.lib ls_test)
  (modules test_runner)
- (flags (:standard -open StdLabels -w +A-48-42-40)))
+ (flags
+  (:standard -open StdLabels -w +A-48-42-40)))
 
 (rule
  (alias runtest)
